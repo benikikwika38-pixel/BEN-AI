@@ -24,132 +24,84 @@ recognition.addEventListener('error', (event) => {
     outputDiv.textContent = `Erreur: ${event.error}`;
 });
 
+// Base de connaissances initiale
+let knowledgeBase = [
+    {keywords:["bonjour","salut","hello"], response:"Bonjour ! Je suis Vortex Voice, votre assistant vocal spécialisé en informatique. Mon créateur est Béni Kikwika Kambwala.", creator:true},
+    {keywords:["qui t'a créé","qui est ton créateur","propriétaire"], response:"Mon créateur est Béni Kikwika Kambwala. Il m'a conçu pour répondre à toutes les questions d’informatique et aider les étudiants et développeurs.", creator:true},
+    {keywords:["ordinateur"], response:"Un ordinateur est une machine électronique capable de traiter, stocker et manipuler des informations selon des instructions données par un programme."},
+    {keywords:["informatique"], response:"L'informatique est la science du traitement automatique de l'information à l'aide d'ordinateurs et de logiciels."},
+    {keywords:["bit"], response:"Un bit est l'unité minimale d'information en informatique, pouvant être 0 ou 1."},
+    {keywords:["octet"], response:"Un octet est un ensemble de 8 bits, utilisé pour mesurer la capacité de stockage ou la taille des données."},
+    {keywords:["algorithme"], response:"Un algorithme est une suite d'instructions pour résoudre un problème ou exécuter une tâche."},
+    {keywords:["programmation","coder"], response:"La programmation consiste à écrire des instructions compréhensibles par l'ordinateur pour créer des logiciels et résoudre des problèmes."},
+    {keywords:["langage","python","javascript","html","css","java","c++"], response:"Un langage de programmation permet de communiquer avec l'ordinateur pour créer des programmes. Exemples : Python, JavaScript, Java, C++, HTML, CSS."},
+    {keywords:["logiciel","word","excel","tableur"], response:"Un logiciel est un programme permettant d'accomplir une tâche sur l'ordinateur. Word est un traitement de texte et Excel est un tableur."},
+    {keywords:["bases de données"], response:"Une base de données est un système organisé pour stocker et gérer des informations."},
+    {keywords:["vortex"], response:"Vortex Voice est votre assistant vocal spécialisé en informatique."},
+    {keywords:["ia","intelligence artificielle"], response:"L'intelligence artificielle permet à la machine de simuler l'intelligence humaine."},
+    {keywords:["machine learning","apprentissage automatique"], response:"Le machine learning permet à l'ordinateur d'apprendre à partir de données."},
+    {keywords:["composants","parties pc","ordinateur composants"], response:`Les composants principaux d'un ordinateur :
+- Processeur (CPU)
+- Mémoire vive (RAM)
+- Carte mère
+- Carte graphique (GPU)
+- Disque dur / SSD
+- Alimentation (PSU)
+- Carte son
+- Carte réseau
+- Boîtier
+- Ventilateurs / refroidissement
+- Périphériques (clavier, souris, écran, imprimante)`},
+    {keywords:["créateurs de l'informatique","pionniers"], response:`Pionniers de l'informatique :
+- Charles Babbage (~1837) : machine analytique
+- Ada Lovelace (~1843) : premier programme
+- Alan Turing (~1936) : machine de Turing
+- John von Neumann (~1945) : architecture moderne
+- Grace Hopper (~1959) : langage COBOL`},
+    {keywords:["générations d'ordinateur"], response:`Générations d’ordinateurs :
+1. 1ère génération (1940-1956) : tubes à vide
+2. 2ème génération (1956-1963) : transistors
+3. 3ème génération (1964-1971) : circuits intégrés
+4. 4ème génération (1971-1980) : microprocesseurs
+5. 5ème génération (1980-aujourd’hui) : intelligence artificielle et parallélisme`}
+];
+
+// Charger le contenu mémorisé
+if(localStorage.getItem('vortexKnowledge')){
+    knowledgeBase = JSON.parse(localStorage.getItem('vortexKnowledge'));
+}
+
 // Fonction principale
 function respond(question) {
-    let answer = "Je ne suis pas sûr de comprendre. Peux-tu préciser ta question ?";
     question = question.toLowerCase();
+    let answer = "Je ne suis pas sûr de comprendre. Peux-tu préciser ta question ?";
+    let creator = false;
+    let found = false;
 
-    // Salutations et présentation
-    const greetings = ["bonjour", "salut", "hello", "salutations"];
-    for (let g of greetings) {
-        if (question.includes(g)) {
-            answer = `Bonjour ! Je suis Vortex Voice, votre assistant vocal spécialisé en informatique. Mon créateur est Béni Kikwika Kambwala.`;
-            speakAnswer(answer, true);
-            return;
-        }
-    }
-
-    // Questions sur le créateur
-    const creatorQuestions = [
-        "qui t'a créé", "qui est ton propriétaire", "qui est ton créateur",
-        "parle-moi de ton créateur", "parle-moi de toi", "qui est derrière toi"
-    ];
-    for (let cq of creatorQuestions) {
-        if (question.includes(cq)) {
-            answer = "Mon créateur est Béni Kikwika Kambwala. Il m'a conçu pour répondre à toutes les questions d’informatique et aider les étudiants et développeurs.";
-            speakAnswer(answer, true);
-            return;
-        }
-    }
-
-    // Définitions fondamentales
-    const definitions = [
-        {keywords:["ordinateur"], response:"Un ordinateur est une machine électronique capable de traiter, stocker et manipuler des informations selon des instructions données par un programme."},
-        {keywords:["informatique"], response:"L'informatique est la science du traitement automatique de l'information à l'aide d'ordinateurs et de logiciels."},
-        {keywords:["bit"], response:"Un bit est l'unité minimale d'information en informatique, pouvant être 0 ou 1."},
-        {keywords:["octet"], response:"Un octet est un ensemble de 8 bits, utilisé pour mesurer la capacité de stockage ou la taille des données."}
-    ];
-
-    for (let def of definitions) {
-        for (let kw of def.keywords) {
-            if (question.includes(kw)) {
-                answer = def.response;
-                speakAnswer(answer);
-                return;
-            }
-        }
-    }
-
-    // Composants de l'ordinateur
-    const computerComponents = [
-        {keywords: ["composants de l'ordinateur", "ordinateur composants", "parties du pc"], response:
-`Les composants principaux d'un ordinateur sont :
-- Processeur (CPU) : le cerveau de l’ordinateur (~exécute les instructions).
-- Mémoire vive (RAM) : mémoire temporaire pour les données en cours d'utilisation.
-- Carte mère : connecte tous les composants.
-- Carte graphique (GPU) : gère l'affichage et les calculs graphiques.
-- Disque dur / SSD : stockage permanent.
-- Alimentation (PSU) : fournit l'énergie.
-- Carte son : gère l'audio.
-- Carte réseau : connecte à Internet.
-- Boîtier : protège les composants.
-- Ventilateurs / refroidissement : régulent la température.
-- Périphériques : clavier, souris, écran, imprimante.`}
-    ];
-
-    for (let comp of computerComponents) {
-        for (let kw of comp.keywords) {
-            if (question.includes(kw)) {
-                answer = comp.response;
-                speakAnswer(answer);
-                return;
-            }
-        }
-    }
-
-    // Créateurs célèbres avec années
-    const creatorsFAQ = [
-        {keywords:["créateurs de l'informatique", "pionniers informatique"], response:
-`Pionniers de l'informatique :
-- Charles Babbage (~1837) : machine analytique.
-- Ada Lovelace (~1843) : premier programme pour machine analytique.
-- Alan Turing (~1936) : machine de Turing.
-- John von Neumann (~1945) : architecture moderne.
-- Grace Hopper (~1959) : langage COBOL.`},
-        {keywords:["générations d'ordinateur", "évolution ordinateur"], response:
-`Générations d’ordinateurs :
-1. 1ère génération (1940-1956) : tubes à vide.
-2. 2ème génération (1956-1963) : transistors.
-3. 3ème génération (1964-1971) : circuits intégrés.
-4. 4ème génération (1971-1980) : microprocesseurs.
-5. 5ème génération (1980-aujourd’hui) : intelligence artificielle et parallélisme.`}
-    ];
-
-    for (let item of creatorsFAQ) {
-        for (let kw of item.keywords) {
-            if (question.includes(kw)) {
+    knowledgeBase.forEach(item => {
+        for(let kw of item.keywords){
+            if(question.includes(kw)){
                 answer = item.response;
-                speakAnswer(answer);
-                return;
-            }
-        }
-    }
-
-    // FAQ informatique
-    const faq = [
-        {keywords: ["algorithme", "définition d'algorithme"], response: "Un algorithme est une suite d'instructions pour résoudre un problème ou exécuter une tâche."},
-        {keywords: ["programmation", "coder", "écrire un programme"], response: "La programmation consiste à écrire des instructions compréhensibles par l'ordinateur pour créer des logiciels et résoudre des problèmes."},
-        {keywords: ["langage de programmation", "python", "javascript", "html", "css", "java", "c++"], response: "Un langage de programmation permet de communiquer avec l'ordinateur pour créer des programmes. Exemples : Python, JavaScript, Java, C++, HTML, CSS."},
-        {keywords: ["logiciel", "logiciels"], response: "Un logiciel est un programme permettant d'accomplir une tâche sur l'ordinateur, comme Word ou Excel."},
-        {keywords: ["word"], response: "Microsoft Word est un logiciel de traitement de texte."},
-        {keywords: ["excel"], response: "Microsoft Excel est un logiciel de tableur."},
-        {keywords: ["bases de données"], response: "Une base de données est un système organisé pour stocker et gérer des informations."},
-        {keywords: ["vortex"], response: "Vortex Voice est votre assistant vocal spécialisé en informatique."},
-        {keywords: ["ia", "intelligence artificielle"], response: "L'intelligence artificielle permet à la machine de simuler l'intelligence humaine."},
-        {keywords: ["machine learning", "apprentissage automatique"], response: "Le machine learning permet à l'ordinateur d'apprendre à partir de données."}
-    ];
-
-    for (let item of faq) {
-        for (let kw of item.keywords) {
-            if (question.includes(kw)) {
-                answer = item.response;
+                creator = item.creator || false;
+                found = true;
                 break;
             }
         }
-        if (answer !== "Je ne suis pas sûr de comprendre. Peux-tu préciser ta question ?") break;
+    });
+
+    // Si la question n'est pas trouvée → apprentissage
+    if(!found){
+        const userAnswer = prompt("Je ne connais pas la réponse. Peux-tu me dire la bonne réponse ?");
+        if(userAnswer && userAnswer.trim() !== ""){
+            knowledgeBase.push({keywords:[question], response:userAnswer});
+            localStorage.setItem('vortexKnowledge', JSON.stringify(knowledgeBase));
+            answer = "Merci ! J'ai appris cette réponse pour la prochaine fois.";
+        } else {
+            answer = "D'accord, je n'ai pas appris cette réponse.";
+        }
     }
 
-    speakAnswer(answer);
+    speakAnswer(answer, creator);
 }
 
 // Fonction pour parler et afficher la réponse + bulle du créateur
@@ -169,4 +121,4 @@ function speakAnswer(text, creator = false) {
     const utter = new SpeechSynthesisUtterance(text);
     utter.lang = 'fr-FR';
     synth.speak(utter);
-}
+                }
