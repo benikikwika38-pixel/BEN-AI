@@ -2,36 +2,18 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>IA Informatique PWA 🤖</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
-    <meta name="theme-color" content="#4CAF50">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vortex Voice - Assistant Informatique</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <h1>IA Informatique 🤖</h1>
-        <textarea id="question" placeholder="Pose ta question ici..."></textarea>
-        <button onclick="envoyerQuestion()">Envoyer</button>
-        <div id="reponse"></div>
+        <h1>Vortex Voice 💻</h1>
+        <p>Parlez-moi, je réponds à toutes vos questions d’informatique !</p>
+        <button id="startBtn">🎤 Parler</button>
+        <div id="output"></div>
     </div>
 
-    <script>
-        async function envoyerQuestion() {
-            const question = document.getElementById("question").value;
-            const res = await fetch("/poser_question", {
-                method: "POST",
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify({question})
-            });
-            const data = await res.json();
-            document.getElementById("reponse").innerText = data.reponse;
-        }
-
-        // Enregistrement du service worker pour PWA
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/static/service-worker.js')
-            .then(() => console.log('Service Worker enregistré !'));
-        }
-    </script>
+    <script src="vortex-complet.js"></script>
 </body>
 </html>
