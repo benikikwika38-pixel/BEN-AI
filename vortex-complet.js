@@ -24,50 +24,121 @@ recognition.addEventListener('error', (event) => {
     outputDiv.textContent = `Erreur: ${event.error}`;
 });
 
-// Fonction principale pour répondre
+// Fonction principale
 function respond(question) {
-    let answer = "Je ne suis pas sûr de comprendre. Peux-tu préciser ta question ? Par exemple, sur un logiciel, un langage de programmation ou un algorithme.";
+    let answer = "Je ne suis pas sûr de comprendre. Peux-tu préciser ta question ?";
     question = question.toLowerCase();
 
     // Salutations et présentation
     const greetings = ["bonjour", "salut", "hello", "salutations"];
     for (let g of greetings) {
         if (question.includes(g)) {
-            answer = `Bonjour ! Je suis Vortex Voice, votre assistant vocal spécialisé en informatique. Je peux répondre à vos questions sur les logiciels, la programmation, les algorithmes et plus encore. Mon créateur est Béni Kikwika Kambwala.`;
-            speakAnswer(answer);
+            answer = `Bonjour ! Je suis Vortex Voice, votre assistant vocal spécialisé en informatique. Mon créateur est Béni Kikwika Kambwala.`;
+            speakAnswer(answer, true);
             return;
         }
     }
 
-    // Réponses sur le créateur
-    const creatorQuestions = ["qui t'a créé", "qui est ton propriétaire", "qui est ton créateur"];
+    // Questions sur le créateur
+    const creatorQuestions = [
+        "qui t'a créé", "qui est ton propriétaire", "qui est ton créateur",
+        "parle-moi de ton créateur", "parle-moi de toi", "qui est derrière toi"
+    ];
     for (let cq of creatorQuestions) {
         if (question.includes(cq)) {
-            answer = "Mon créateur est Béni Kikwika Kambwala.";
-            speakAnswer(answer);
+            answer = "Mon créateur est Béni Kikwika Kambwala. Il m'a conçu pour répondre à toutes les questions d’informatique et aider les étudiants et développeurs.";
+            speakAnswer(answer, true);
             return;
         }
     }
 
-    // FAQ étendue pour informatique
-    const faq = [
-        {keywords: ["qu'est ce qu'un algorithme", "définition d'algorithme", "algorithme"], response: "Un algorithme est une suite d'instructions étape par étape permettant de résoudre un problème ou d'effectuer une tâche précise."},
-        {keywords: ["tri", "algorithme de tri"], response: "Un algorithme de tri organise des données dans un ordre précis, comme croissant ou décroissant."},
-        {keywords: ["programmation", "c'est quoi la programmation", "coder", "écrire un programme"], response: "La programmation consiste à écrire des instructions que l'ordinateur peut comprendre pour créer des logiciels, résoudre des problèmes ou automatiser des tâches. Les langages de programmation sont utilisés pour cela."},
-        {keywords: ["langage de programmation", "langages de programmation", "python", "javascript", "html", "css", "java", "c++"], 
-         response: "Un langage de programmation est un outil qui permet de communiquer avec l'ordinateur pour créer des programmes et logiciels. Exemples : Python, JavaScript, Java, C++, HTML, CSS."},
-        {keywords: ["logiciel", "logiciels"], response: "Un logiciel est un programme informatique qui permet d'exécuter des tâches spécifiques sur un ordinateur, comme Word pour le traitement de texte ou Excel pour les calculs."},
-        {keywords: ["word"], response: "Microsoft Word est un logiciel de traitement de texte qui permet de créer, modifier et mettre en forme des documents facilement."},
-        {keywords: ["excel"], response: "Microsoft Excel est un logiciel de tableur qui permet de gérer des données, effectuer des calculs et créer des graphiques."},
-        {keywords: ["bases de données", "base de données"], response: "Une base de données est un système organisé permettant de stocker, gérer et interroger des informations de manière structurée."},
-        {keywords: ["programmation générale"], response: "La programmation générale consiste à apprendre les concepts de base de la programmation pour créer des programmes et résoudre des problèmes informatiques."},
-        {keywords: ["initiation à l'informatique", "informatique débutant"], response: "L'initiation à l'informatique permet de comprendre les concepts de base, comme l'utilisation d'un ordinateur, des logiciels et des notions de programmation."},
-        {keywords: ["vortex"], response: "Vortex Voice est votre assistant vocal créé pour répondre à toutes vos questions sur l'informatique."},
-        {keywords: ["ia", "intelligence artificielle"], response: "L'intelligence artificielle permet aux machines de simuler des fonctions humaines comme l'apprentissage, la compréhension et la prise de décision."},
-        {keywords: ["machine learning", "apprentissage automatique"], response: "Le machine learning est une technique d'IA où l'ordinateur apprend à partir de données pour effectuer des tâches sans programmation explicite."}
+    // Définitions fondamentales
+    const definitions = [
+        {keywords:["ordinateur"], response:"Un ordinateur est une machine électronique capable de traiter, stocker et manipuler des informations selon des instructions données par un programme."},
+        {keywords:["informatique"], response:"L'informatique est la science du traitement automatique de l'information à l'aide d'ordinateurs et de logiciels."},
+        {keywords:["bit"], response:"Un bit est l'unité minimale d'information en informatique, pouvant être 0 ou 1."},
+        {keywords:["octet"], response:"Un octet est un ensemble de 8 bits, utilisé pour mesurer la capacité de stockage ou la taille des données."}
     ];
 
-    // Recherche de mot-clé dans la question
+    for (let def of definitions) {
+        for (let kw of def.keywords) {
+            if (question.includes(kw)) {
+                answer = def.response;
+                speakAnswer(answer);
+                return;
+            }
+        }
+    }
+
+    // Composants de l'ordinateur
+    const computerComponents = [
+        {keywords: ["composants de l'ordinateur", "ordinateur composants", "parties du pc"], response:
+`Les composants principaux d'un ordinateur sont :
+- Processeur (CPU) : le cerveau de l’ordinateur (~exécute les instructions).
+- Mémoire vive (RAM) : mémoire temporaire pour les données en cours d'utilisation.
+- Carte mère : connecte tous les composants.
+- Carte graphique (GPU) : gère l'affichage et les calculs graphiques.
+- Disque dur / SSD : stockage permanent.
+- Alimentation (PSU) : fournit l'énergie.
+- Carte son : gère l'audio.
+- Carte réseau : connecte à Internet.
+- Boîtier : protège les composants.
+- Ventilateurs / refroidissement : régulent la température.
+- Périphériques : clavier, souris, écran, imprimante.`}
+    ];
+
+    for (let comp of computerComponents) {
+        for (let kw of comp.keywords) {
+            if (question.includes(kw)) {
+                answer = comp.response;
+                speakAnswer(answer);
+                return;
+            }
+        }
+    }
+
+    // Créateurs célèbres avec années
+    const creatorsFAQ = [
+        {keywords:["créateurs de l'informatique", "pionniers informatique"], response:
+`Pionniers de l'informatique :
+- Charles Babbage (~1837) : machine analytique.
+- Ada Lovelace (~1843) : premier programme pour machine analytique.
+- Alan Turing (~1936) : machine de Turing.
+- John von Neumann (~1945) : architecture moderne.
+- Grace Hopper (~1959) : langage COBOL.`},
+        {keywords:["générations d'ordinateur", "évolution ordinateur"], response:
+`Générations d’ordinateurs :
+1. 1ère génération (1940-1956) : tubes à vide.
+2. 2ème génération (1956-1963) : transistors.
+3. 3ème génération (1964-1971) : circuits intégrés.
+4. 4ème génération (1971-1980) : microprocesseurs.
+5. 5ème génération (1980-aujourd’hui) : intelligence artificielle et parallélisme.`}
+    ];
+
+    for (let item of creatorsFAQ) {
+        for (let kw of item.keywords) {
+            if (question.includes(kw)) {
+                answer = item.response;
+                speakAnswer(answer);
+                return;
+            }
+        }
+    }
+
+    // FAQ informatique
+    const faq = [
+        {keywords: ["algorithme", "définition d'algorithme"], response: "Un algorithme est une suite d'instructions pour résoudre un problème ou exécuter une tâche."},
+        {keywords: ["programmation", "coder", "écrire un programme"], response: "La programmation consiste à écrire des instructions compréhensibles par l'ordinateur pour créer des logiciels et résoudre des problèmes."},
+        {keywords: ["langage de programmation", "python", "javascript", "html", "css", "java", "c++"], response: "Un langage de programmation permet de communiquer avec l'ordinateur pour créer des programmes. Exemples : Python, JavaScript, Java, C++, HTML, CSS."},
+        {keywords: ["logiciel", "logiciels"], response: "Un logiciel est un programme permettant d'accomplir une tâche sur l'ordinateur, comme Word ou Excel."},
+        {keywords: ["word"], response: "Microsoft Word est un logiciel de traitement de texte."},
+        {keywords: ["excel"], response: "Microsoft Excel est un logiciel de tableur."},
+        {keywords: ["bases de données"], response: "Une base de données est un système organisé pour stocker et gérer des informations."},
+        {keywords: ["vortex"], response: "Vortex Voice est votre assistant vocal spécialisé en informatique."},
+        {keywords: ["ia", "intelligence artificielle"], response: "L'intelligence artificielle permet à la machine de simuler l'intelligence humaine."},
+        {keywords: ["machine learning", "apprentissage automatique"], response: "Le machine learning permet à l'ordinateur d'apprendre à partir de données."}
+    ];
+
     for (let item of faq) {
         for (let kw of item.keywords) {
             if (question.includes(kw)) {
@@ -75,17 +146,27 @@ function respond(question) {
                 break;
             }
         }
-        if (answer !== "Je ne suis pas sûr de comprendre. Peux-tu préciser ta question ? Par exemple, sur un logiciel, un langage de programmation ou un algorithme.") break;
+        if (answer !== "Je ne suis pas sûr de comprendre. Peux-tu préciser ta question ?") break;
     }
 
     speakAnswer(answer);
 }
 
-// Fonction pour parler et afficher la réponse
-function speakAnswer(text) {
+// Fonction pour parler et afficher la réponse + bulle du créateur
+function speakAnswer(text, creator = false) {
+    if (creator) {
+        const bubble = document.createElement("div");
+        bubble.className = "creator-bubble";
+        bubble.innerHTML = `
+            <strong>Créateur :</strong> Béni Kikwika Kambwala<br>
+            <em>Il m'a conçu pour répondre à toutes les questions d’informatique et aider les étudiants et développeurs.</em>
+        `;
+        outputDiv.appendChild(bubble);
+    }
+
     outputDiv.textContent += `\n💡 Réponse: ${text}`;
     const synth = window.speechSynthesis;
     const utter = new SpeechSynthesisUtterance(text);
     utter.lang = 'fr-FR';
     synth.speak(utter);
-    }
+}
