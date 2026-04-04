@@ -22,8 +22,9 @@ function generateMessage(){
     document.getElementById("resultat").innerText = phrase;
 }
 
-// 🔊 VOICE
+// 🔊 VOICE (CORRIGÉE)
 function speakMessage(){
+
     let text = document.getElementById("resultat").innerText;
 
     if(text === ""){
@@ -31,16 +32,29 @@ function speakMessage(){
         return;
     }
 
-    let speech = new SpeechSynthesisUtterance(text);
-    speech.lang = "fr-FR";
+    let speech = new SpeechSynthesisUtterance();
 
+    speech.text = text;
+    speech.lang = "fr-FR";
+    speech.volume = 50;
+    speech.rate = 1;
+    speech.pitch = 1;
+
+    window.speechSynthesis.cancel(); // évite bug
     window.speechSynthesis.speak(speech);
 }
 
-// 🎤 VOICE RECOGNITION
+// 🎤 MICRO (VOICE RECOGNITION)
 function startListening(){
 
-    let recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    let SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    if(!SpeechRecognition){
+        alert("Ton téléphone ne supporte pas la reconnaissance vocale");
+        return;
+    }
+
+    let recognition = new SpeechRecognition();
 
     recognition.lang = "fr-FR";
     recognition.start();
@@ -51,6 +65,10 @@ function startListening(){
         document.getElementById("resultat").innerText = "Tu as dit : " + voiceText;
 
         respondAI(voiceText);
+    }
+
+    recognition.onerror = function(){
+        alert("Erreur micro ou permission refusée");
     }
 }
 
@@ -79,5 +97,6 @@ function respondAI(text){
     let speech = new SpeechSynthesisUtterance(response);
     speech.lang = "fr-FR";
 
+    window.speechSynthesis.cancel();
     window.speechSynthesis.speak(speech);
 }
