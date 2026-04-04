@@ -9,7 +9,6 @@ recognition.maxAlternatives = 1;
 const startBtn = document.getElementById('startBtn');
 const outputDiv = document.getElementById('output');
 
-// Fonction pour lancer l'écoute
 startBtn.addEventListener('click', () => {
     outputDiv.textContent = "🎙️ Écoute en cours...";
     recognition.start();
@@ -25,7 +24,6 @@ recognition.addEventListener('error', (event) => {
     outputDiv.textContent = `Erreur: ${event.error}`;
 });
 
-// Fonction principale pour répondre
 function respond(question) {
     let answer = "Désolé, je ne sais pas répondre à cela pour le moment.";
     question = question.toLowerCase();
@@ -35,6 +33,17 @@ function respond(question) {
     for (let g of greetings) {
         if (question.includes(g)) {
             answer = `Bonjour ! Je suis Vortex Voice, votre assistant vocal spécialisé en informatique. Je peux répondre à vos questions sur l'informatique, les logiciels, la programmation et plus encore. Mon créateur est Béni Kikwika Kambwala.`;
+            speak(answer);
+            outputDiv.textContent += `\n💡 Réponse: ${answer}`;
+            return;
+        }
+    }
+
+    // Réponses sur le créateur
+    const creatorQuestions = ["qui t'a créé", "qui est ton propriétaire", "qui est ton créateur"];
+    for (let cq of creatorQuestions) {
+        if (question.includes(cq)) {
+            answer = "Mon créateur est Béni Kikwika Kambwala.";
             speak(answer);
             outputDiv.textContent += `\n💡 Réponse: ${answer}`;
             return;
@@ -79,4 +88,4 @@ function speak(text) {
     const utter = new SpeechSynthesisUtterance(text);
     utter.lang = 'fr-FR';
     synth.speak(utter);
-}
+                }
