@@ -27,7 +27,7 @@ recognition.addEventListener('error', (event) => {
 // Base de connaissances initiale
 let knowledgeBase = [
     {keywords:["bonjour","salut","hello"], response:"Bonjour ! Je suis Vortex Voice, votre assistant vocal spécialisé en informatique. Mon créateur est Béni Kikwika Kambwala.", creator:true},
-    {keywords:["qui t'a créé","qui est ton créateur","propriétaire"], response:"Mon créateur est Béni Kikwika Kambwala. Il m'a conçu pour répondre à toutes les questions d’informatique et aider les étudiants et développeurs.", creator:true},
+    {keywords:["qui t'a créé","qui est ton créateur","propriétaire","parle-moi de ton créateur"], response:"Mon créateur est Béni Kikwika Kambwala. Il m'a conçu pour répondre à toutes les questions d’informatique et aider les étudiants et développeurs.", creator:true},
     {keywords:["ordinateur"], response:"Un ordinateur est une machine électronique capable de traiter, stocker et manipuler des informations selon des instructions données par un programme."},
     {keywords:["informatique"], response:"L'informatique est la science du traitement automatique de l'information à l'aide d'ordinateurs et de logiciels."},
     {keywords:["bit"], response:"Un bit est l'unité minimale d'information en informatique, pouvant être 0 ou 1."},
@@ -68,7 +68,9 @@ let knowledgeBase = [
 
 // Charger le contenu mémorisé
 if(localStorage.getItem('vortexKnowledge')){
-    knowledgeBase = JSON.parse(localStorage.getItem('vortexKnowledge'));
+    const storedKnowledge = JSON.parse(localStorage.getItem('vortexKnowledge'));
+    // S'assurer que le créateur reste mémorisé
+    knowledgeBase = knowledgeBase.concat(storedKnowledge.filter(item => !(item.creator === true)));
 }
 
 // Fonction principale
@@ -93,8 +95,10 @@ function respond(question) {
     if(!found){
         const userAnswer = prompt("Je ne connais pas la réponse. Peux-tu me dire la bonne réponse ?");
         if(userAnswer && userAnswer.trim() !== ""){
-            knowledgeBase.push({keywords:[question], response:userAnswer});
-            localStorage.setItem('vortexKnowledge', JSON.stringify(knowledgeBase));
+            // Vérifie si la question concerne le créateur
+            const isCreatorQuestion = question.includes("créateur") || question.includes("qui t'a créé") || question.includes("propriétaire");
+            knowledgeBase.push({keywords:[question], response:userAnswer, creator:isCreatorQuestion});
+            localStorage.setItem('vortexKnowledge', JSON.stringify(knowledgeBase.filter(item => !item.creator || item.creator===true)));
             answer = "Merci ! J'ai appris cette réponse pour la prochaine fois.";
         } else {
             answer = "D'accord, je n'ai pas appris cette réponse.";
@@ -121,4 +125,4 @@ function speakAnswer(text, creator = false) {
     const utter = new SpeechSynthesisUtterance(text);
     utter.lang = 'fr-FR';
     synth.speak(utter);
-                }
+    }
