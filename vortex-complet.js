@@ -24,8 +24,8 @@ recognition.addEventListener('error', (event) => {
     outputDiv.textContent = `Erreur: ${event.error}`;
 });
 
-// Base de connaissances initiale
-let knowledgeBase = [
+// Base de connaissances complète sécurisée
+const knowledgeBase = [
     {keywords:["bonjour","salut","hello"], response:"Bonjour ! Je suis Vortex Voice, votre assistant vocal spécialisé en informatique. Mon créateur est Béni Kikwika Kambwala.", creator:true},
     {keywords:["qui t'a créé","qui est ton créateur","propriétaire","parle-moi de ton créateur"], response:"Mon créateur est Béni Kikwika Kambwala. Il m'a conçu pour répondre à toutes les questions d’informatique et aider les étudiants et développeurs.", creator:true},
     {keywords:["ordinateur"], response:"Un ordinateur est une machine électronique capable de traiter, stocker et manipuler des informations selon des instructions données par un programme."},
@@ -66,44 +66,22 @@ let knowledgeBase = [
 5. 5ème génération (1980-aujourd’hui) : intelligence artificielle et parallélisme`}
 ];
 
-// Charger le contenu mémorisé
-if(localStorage.getItem('vortexKnowledge')){
-    const storedKnowledge = JSON.parse(localStorage.getItem('vortexKnowledge'));
-    // S'assurer que le créateur reste mémorisé
-    knowledgeBase = knowledgeBase.concat(storedKnowledge.filter(item => !(item.creator === true)));
-}
-
 // Fonction principale
 function respond(question) {
     question = question.toLowerCase();
     let answer = "Je ne suis pas sûr de comprendre. Peux-tu préciser ta question ?";
     let creator = false;
-    let found = false;
 
+    // Recherche intelligente par mots-clés
     knowledgeBase.forEach(item => {
         for(let kw of item.keywords){
             if(question.includes(kw)){
                 answer = item.response;
                 creator = item.creator || false;
-                found = true;
                 break;
             }
         }
     });
-
-    // Si la question n'est pas trouvée → apprentissage
-    if(!found){
-        const userAnswer = prompt("Je ne connais pas la réponse. Peux-tu me dire la bonne réponse ?");
-        if(userAnswer && userAnswer.trim() !== ""){
-            // Vérifie si la question concerne le créateur
-            const isCreatorQuestion = question.includes("créateur") || question.includes("qui t'a créé") || question.includes("propriétaire");
-            knowledgeBase.push({keywords:[question], response:userAnswer, creator:isCreatorQuestion});
-            localStorage.setItem('vortexKnowledge', JSON.stringify(knowledgeBase.filter(item => !item.creator || item.creator===true)));
-            answer = "Merci ! J'ai appris cette réponse pour la prochaine fois.";
-        } else {
-            answer = "D'accord, je n'ai pas appris cette réponse.";
-        }
-    }
 
     speakAnswer(answer, creator);
 }
