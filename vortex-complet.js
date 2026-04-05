@@ -24,10 +24,11 @@ recognition.addEventListener('error', (event) => {
     outputDiv.textContent = `Erreur: ${event.error}`;
 });
 
-// BASE DE CONNAISSANCE
+
+// ================= BASE DE CONNAISSANCE =================
 const knowledgeBase = [
 
-/* ===================== CONVERSATION ===================== */
+/* ===== CONVERSATION ===== */
 {
 keywords:["bonjour","salut","hello"],
 response:"Bonjour 😊 ! Je suis Vortex Voice, votre assistant en informatique. Comment puis-je vous aider ?"
@@ -45,21 +46,25 @@ keywords:["au revoir","bye"],
 response:"Au revoir 👋 ! À bientôt."
 },
 
-/* ===================== IDENTITÉ ===================== */
+/* ===== IDENTITÉ ===== */
 {
 keywords:["qui es-tu","présente toi"],
 response:"Je suis Vortex Voice, un assistant vocal spécialisé en informatique. Je suis là pour vous aider."
 },
-{
-keywords:["qui t'a créé","créateur","propriétaire","biographie béni","béni kikwika"],
-response:`Mon créateur est Béni Kikwika Kambwala.
 
-Biographie :
-Béni Kikwika Kambwala est un passionné d'informatique et de technologie. Il s'intéresse à la programmation, aux bases de données et à la création de solutions numériques. Il a conçu Vortex Voice pour aider les étudiants et les débutants à mieux comprendre l’informatique et évoluer dans ce domaine.`,
+{
+keywords:["qui est béni kikwika","béni kikwika","qui est ton créateur","propriétaire","biographie béni"],
+response:`Béni Kikwika Kambwala est un jeune développeur congolais né le 20 mai 2007 et résidant à Kinshasa.
+
+Il est le créateur de Technova Academy, une plateforme éducative lancée le 15 mars 2026 pour former les jeunes aux compétences numériques.
+
+Il est aussi le créateur de Vortex Voice, un assistant vocal intelligent spécialisé en informatique.
+
+Passionné par la technologie, il développe des projets pour aider les autres à apprendre et évoluer dans le domaine informatique.`,
 creator:true
 },
 
-/* ===================== DÉFINITIONS ===================== */
+/* ===== DÉFINITIONS ===== */
 {
 keywords:["ordinateur"],
 response:"Un ordinateur est une machine électronique capable de traiter, stocker et manipuler des informations automatiquement."
@@ -77,7 +82,7 @@ keywords:["octet"],
 response:"Un octet est composé de 8 bits."
 },
 
-/* ===================== PROGRAMMATION ===================== */
+/* ===== PROGRAMMATION ===== */
 {
 keywords:["programmation","coder"],
 response:"La programmation consiste à écrire des instructions pour qu’un ordinateur exécute des tâches."
@@ -86,22 +91,22 @@ response:"La programmation consiste à écrire des instructions pour qu’un ord
 keywords:["langage","langage informatique"],
 response:`Un langage informatique permet de communiquer avec un ordinateur.
 
-Exemples de langages :
+Exemples :
 - Python : simple et puissant
 - JavaScript : pour les sites web
 - Java : applications
-- C++ : performant
-- HTML/CSS : structure et design des sites`
+- C++ : performance
+- HTML/CSS : structure et design`
 },
 {
 keywords:["algorithme"],
 response:"Un algorithme est une suite d’étapes logiques permettant de résoudre un problème."
 },
 
-/* ===================== LOGICIELS ===================== */
+/* ===== LOGICIELS ===== */
 {
 keywords:["logiciel"],
-response:"Un logiciel est un programme qui permet d'effectuer une tâche sur un ordinateur."
+response:"Un logiciel est un programme permettant d’effectuer une tâche sur un ordinateur."
 },
 {
 keywords:["word"],
@@ -109,14 +114,14 @@ response:"Microsoft Word est un logiciel de traitement de texte."
 },
 {
 keywords:["excel"],
-response:"Microsoft Excel est un logiciel de tableur utilisé pour les calculs et tableaux."
+response:"Microsoft Excel est un logiciel de tableur."
 },
 {
 keywords:["bases de données"],
 response:"Une base de données permet de stocker et organiser des informations."
 },
 
-/* ===================== IA ===================== */
+/* ===== IA ===== */
 {
 keywords:["ia","intelligence artificielle"],
 response:"L’intelligence artificielle permet aux machines d’imiter l’intelligence humaine."
@@ -126,7 +131,7 @@ keywords:["machine learning"],
 response:"Le machine learning permet aux machines d’apprendre à partir des données."
 },
 
-/* ===================== COMPOSANTS ===================== */
+/* ===== COMPOSANTS ===== */
 {
 keywords:["composants","ordinateur composants","parties du pc"],
 response:`Les composants d’un ordinateur :
@@ -139,7 +144,7 @@ response:`Les composants d’un ordinateur :
 - Périphériques : clavier, souris, écran`
 },
 
-/* ===================== HISTOIRE ===================== */
+/* ===== HISTOIRE ===== */
 {
 keywords:["créateurs informatique","pionniers"],
 response:`Pionniers :
@@ -161,7 +166,8 @@ response:`Générations :
 
 ];
 
-// FONCTION PRINCIPALE
+
+// ================= LOGIQUE =================
 function respond(question) {
     question = question.toLowerCase();
     let answer = "Je ne suis pas sûr de comprendre. Pouvez-vous préciser votre question ?";
@@ -180,7 +186,8 @@ function respond(question) {
     speakAnswer(answer, creator);
 }
 
-// VOIX + AFFICHAGE
+
+// ================= VOIX + AFFICHAGE =================
 function speakAnswer(text, creator = false) {
 
     if (creator) {
@@ -188,7 +195,7 @@ function speakAnswer(text, creator = false) {
         bubble.className = "creator-bubble";
         bubble.innerHTML = `
             <strong>Créateur :</strong> Béni Kikwika Kambwala<br>
-            <em>Développeur et passionné d'informatique, créateur de Vortex Voice.</em>
+            <em>Développeur congolais, créateur de Technova Academy et Vortex Voice.</em>
         `;
         outputDiv.appendChild(bubble);
     }
@@ -199,4 +206,4 @@ function speakAnswer(text, creator = false) {
     const utter = new SpeechSynthesisUtterance(text);
     utter.lang = 'fr-FR';
     synth.speak(utter);
-    }
+}
