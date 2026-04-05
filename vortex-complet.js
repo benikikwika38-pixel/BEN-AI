@@ -1,7 +1,6 @@
-// ===== RECONNAISSANCE VOCALE =====
+// ===== VOIX =====
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 const recognition = new SpeechRecognition();
-
 recognition.lang = 'fr-FR';
 
 const startBtn = document.getElementById('startBtn');
@@ -19,7 +18,7 @@ recognition.addEventListener('result', (event) => {
     respond(question);
 });
 
-// ===== ENVOI TEXTE =====
+// ===== TEXTE =====
 sendBtn.addEventListener('click', () => {
     const question = textInput.value.trim();
     if(question !== ""){
@@ -35,7 +34,7 @@ textInput.addEventListener('keypress', (e) => {
     }
 });
 
-// ===== MESSAGES =====
+// ===== AFFICHAGE =====
 function addUserMessage(text){
     outputDiv.innerHTML += `<div class="user-msg">🧑 ${text}</div>`;
     scrollDown();
@@ -50,11 +49,11 @@ function scrollDown(){
     outputDiv.scrollTop = outputDiv.scrollHeight;
 }
 
-// ===== BASE DE CONNAISSANCE =====
+// ===== BASE =====
 const knowledgeBase = [
 
 {keywords:["bonjour","salut"], response:"Bonjour 😊 ! Comment puis-je vous aider ?"},
-{keywords:["ça va","comment ça va"], response:"Je vais très bien merci 😊. Et vous ?"},
+{keywords:["ça va","ca va","comment ça va"], response:"Je vais très bien merci 😊. Et vous ?"},
 {keywords:["merci"], response:"Je vous en prie 😊 !"},
 {keywords:["au revoir"], response:"Au revoir 👋 !"},
 
@@ -62,25 +61,20 @@ const knowledgeBase = [
 
 {
 keywords:["béni kikwika","créateur","propriétaire"],
-response:`Béni Kikwika Kambwala est un jeune développeur congolais né le 20 mai 2007 à Kinshasa.
-
-Il est le créateur de Technova Academy, une plateforme éducative lancée en 2026.
-
-Il est aussi le créateur de Vortex Voice, un assistant intelligent pour aider les étudiants.`,
+response:"Béni Kikwika Kambwala est un développeur congolais, créateur de Technova Academy et de Vortex Voice.",
 creator:true
 },
 
-{keywords:["ordinateur"], response:"Un ordinateur est une machine capable de traiter des informations."},
-{keywords:["informatique"], response:"L'informatique est la science du traitement automatique de l'information."},
-{keywords:["bit"], response:"Un bit est 0 ou 1."},
+{keywords:["ordinateur"], response:"Un ordinateur est une machine qui traite les informations."},
+{keywords:["informatique"], response:"L'informatique est le traitement automatique de l'information."},
+{keywords:["bit"], response:"Un bit vaut 0 ou 1."},
 {keywords:["octet"], response:"Un octet contient 8 bits."},
 
-{keywords:["programmation"], response:"La programmation consiste à créer des programmes pour un ordinateur."},
+{keywords:["programmation"], response:"La programmation consiste à créer des programmes."},
 
 {
 keywords:["langage"],
-response:`Exemples :
-Python, JavaScript, Java, C++, HTML, CSS`
+response:"Exemples : Python, JavaScript, Java, C++, HTML, CSS"
 },
 
 {keywords:["algorithme"], response:"Un algorithme est une suite d'instructions."},
@@ -88,18 +82,13 @@ Python, JavaScript, Java, C++, HTML, CSS`
 {keywords:["logiciel"], response:"Un logiciel est un programme informatique."},
 {keywords:["word"], response:"Word est un logiciel de texte."},
 {keywords:["excel"], response:"Excel est un tableur."},
-{keywords:["base de données"], response:"Permet de stocker les informations."},
+{keywords:["base de données"], response:"Une base de données stocke les informations."},
 
-{keywords:["ia"], response:"L'intelligence artificielle imite l'intelligence humaine."},
+{keywords:["ia"], response:"L’intelligence artificielle imite l’intelligence humaine."},
 
 {
 keywords:["composants"],
-response:`CPU, RAM, Disque dur, Carte mère, Carte graphique`
-},
-
-{
-keywords:["créateurs informatique"],
-response:`Babbage (1837), Ada (1843), Turing (1936)`
+response:"CPU, RAM, Disque dur, Carte mère, Carte graphique"
 }
 
 ];
@@ -109,15 +98,18 @@ function respond(question){
     question = question.toLowerCase();
     let answer = "Je ne comprends pas bien, peux-tu préciser ?";
     let creator = false;
+    let found = false;
 
     for(let item of knowledgeBase){
         for(let kw of item.keywords){
             if(question.includes(kw) || kw.includes(question)){
                 answer = item.response;
                 creator = item.creator || false;
+                found = true;
                 break;
             }
         }
+        if(found) break;
     }
 
     addBotMessage(answer);
@@ -132,10 +124,10 @@ function respond(question){
     speak(answer);
 }
 
-// ===== VOIX =====
+// ===== PARLER =====
 function speak(text){
     const synth = window.speechSynthesis;
     const utter = new SpeechSynthesisUtterance(text);
     utter.lang = "fr-FR";
     synth.speak(utter);
- }
+                         }
