@@ -1,176 +1,113 @@
-// Vérifier compatibilité
+// ===== RECONNAISSANCE VOCALE =====
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 const recognition = new SpeechRecognition();
 
 recognition.lang = 'fr-FR';
-recognition.interimResults = false;
-recognition.maxAlternatives = 1;
 
 const startBtn = document.getElementById('startBtn');
 const outputDiv = document.getElementById('output');
+const textInput = document.getElementById('textInput');
+const sendBtn = document.getElementById('sendBtn');
 
 startBtn.addEventListener('click', () => {
-    outputDiv.textContent = "🎙️ Écoute en cours...";
     recognition.start();
 });
 
 recognition.addEventListener('result', (event) => {
     const question = event.results[0][0].transcript;
-    outputDiv.textContent = `Vous avez dit: "${question}"`;
+    addUserMessage(question);
     respond(question);
 });
 
-recognition.addEventListener('error', (event) => {
-    outputDiv.textContent = `Erreur: ${event.error}`;
+// ===== ENVOI TEXTE =====
+sendBtn.addEventListener('click', () => {
+    const question = textInput.value.trim();
+    if(question !== ""){
+        addUserMessage(question);
+        respond(question);
+        textInput.value = "";
+    }
 });
 
+textInput.addEventListener('keypress', (e) => {
+    if(e.key === "Enter"){
+        sendBtn.click();
+    }
+});
 
-// ================= BASE DE CONNAISSANCE =================
+// ===== MESSAGES =====
+function addUserMessage(text){
+    outputDiv.innerHTML += `<div class="user-msg">🧑 ${text}</div>`;
+    scrollDown();
+}
+
+function addBotMessage(text){
+    outputDiv.innerHTML += `<div class="bot-msg">🤖 ${text}</div>`;
+    scrollDown();
+}
+
+function scrollDown(){
+    outputDiv.scrollTop = outputDiv.scrollHeight;
+}
+
+// ===== BASE DE CONNAISSANCE =====
 const knowledgeBase = [
 
-/* ===== CONVERSATION ===== */
-{
-keywords:["bonjour","salut","hello"],
-response:"Bonjour 😊 ! Je suis Vortex Voice, votre assistant en informatique. Comment puis-je vous aider ?"
-},
-{
-keywords:["ça va","ca va","comment ça va","comment vas-tu","tu vas bien"],
-response:"Je vais très bien, merci 😊. Et vous ? En quoi puis-je vous aider ?"
-},
-{
-keywords:["merci"],
-response:"Je vous en prie 😊 !"
-},
-{
-keywords:["au revoir","bye"],
-response:"Au revoir 👋 ! À bientôt."
-},
+{keywords:["bonjour","salut"], response:"Bonjour 😊 ! Comment puis-je vous aider ?"},
+{keywords:["ça va","comment ça va"], response:"Je vais très bien merci 😊. Et vous ?"},
+{keywords:["merci"], response:"Je vous en prie 😊 !"},
+{keywords:["au revoir"], response:"Au revoir 👋 !"},
 
-/* ===== IDENTITÉ ===== */
-{
-keywords:["qui es-tu","présente toi"],
-response:"Je suis Vortex Voice, un assistant vocal spécialisé en informatique. Je suis là pour vous aider."
-},
+{keywords:["qui es-tu"], response:"Je suis Vortex Voice, un assistant en informatique."},
 
 {
-keywords:["qui est béni kikwika","béni kikwika","qui est ton créateur","propriétaire","biographie béni"],
-response:`Béni Kikwika Kambwala est un jeune développeur congolais né le 20 mai 2007 et résidant à Kinshasa.
+keywords:["béni kikwika","créateur","propriétaire"],
+response:`Béni Kikwika Kambwala est un jeune développeur congolais né le 20 mai 2007 à Kinshasa.
 
-Il est le créateur de Technova Academy, une plateforme éducative lancée le 15 mars 2026 pour former les jeunes aux compétences numériques.
+Il est le créateur de Technova Academy, une plateforme éducative lancée en 2026.
 
-Il est aussi le créateur de Vortex Voice, un assistant vocal intelligent spécialisé en informatique.
-
-Passionné par la technologie, il développe des projets pour aider les autres à apprendre et évoluer dans le domaine informatique.`,
+Il est aussi le créateur de Vortex Voice, un assistant intelligent pour aider les étudiants.`,
 creator:true
 },
 
-/* ===== DÉFINITIONS ===== */
+{keywords:["ordinateur"], response:"Un ordinateur est une machine capable de traiter des informations."},
+{keywords:["informatique"], response:"L'informatique est la science du traitement automatique de l'information."},
+{keywords:["bit"], response:"Un bit est 0 ou 1."},
+{keywords:["octet"], response:"Un octet contient 8 bits."},
+
+{keywords:["programmation"], response:"La programmation consiste à créer des programmes pour un ordinateur."},
+
 {
-keywords:["ordinateur"],
-response:"Un ordinateur est une machine électronique capable de traiter, stocker et manipuler des informations automatiquement."
-},
-{
-keywords:["informatique"],
-response:"L'informatique est la science du traitement automatique de l'information à l'aide d'ordinateurs."
-},
-{
-keywords:["bit"],
-response:"Un bit est la plus petite unité d'information, pouvant être 0 ou 1."
-},
-{
-keywords:["octet"],
-response:"Un octet est composé de 8 bits."
+keywords:["langage"],
+response:`Exemples :
+Python, JavaScript, Java, C++, HTML, CSS`
 },
 
-/* ===== PROGRAMMATION ===== */
-{
-keywords:["programmation","coder"],
-response:"La programmation consiste à écrire des instructions pour qu’un ordinateur exécute des tâches."
-},
-{
-keywords:["langage","langage informatique"],
-response:`Un langage informatique permet de communiquer avec un ordinateur.
+{keywords:["algorithme"], response:"Un algorithme est une suite d'instructions."},
 
-Exemples :
-- Python : simple et puissant
-- JavaScript : pour les sites web
-- Java : applications
-- C++ : performance
-- HTML/CSS : structure et design`
-},
+{keywords:["logiciel"], response:"Un logiciel est un programme informatique."},
+{keywords:["word"], response:"Word est un logiciel de texte."},
+{keywords:["excel"], response:"Excel est un tableur."},
+{keywords:["base de données"], response:"Permet de stocker les informations."},
+
+{keywords:["ia"], response:"L'intelligence artificielle imite l'intelligence humaine."},
+
 {
-keywords:["algorithme"],
-response:"Un algorithme est une suite d’étapes logiques permettant de résoudre un problème."
+keywords:["composants"],
+response:`CPU, RAM, Disque dur, Carte mère, Carte graphique`
 },
 
-/* ===== LOGICIELS ===== */
 {
-keywords:["logiciel"],
-response:"Un logiciel est un programme permettant d’effectuer une tâche sur un ordinateur."
-},
-{
-keywords:["word"],
-response:"Microsoft Word est un logiciel de traitement de texte."
-},
-{
-keywords:["excel"],
-response:"Microsoft Excel est un logiciel de tableur."
-},
-{
-keywords:["bases de données"],
-response:"Une base de données permet de stocker et organiser des informations."
-},
-
-/* ===== IA ===== */
-{
-keywords:["ia","intelligence artificielle"],
-response:"L’intelligence artificielle permet aux machines d’imiter l’intelligence humaine."
-},
-{
-keywords:["machine learning"],
-response:"Le machine learning permet aux machines d’apprendre à partir des données."
-},
-
-/* ===== COMPOSANTS ===== */
-{
-keywords:["composants","ordinateur composants","parties du pc"],
-response:`Les composants d’un ordinateur :
-- Processeur (CPU) : cerveau
-- RAM : mémoire temporaire
-- Disque dur / SSD : stockage
-- Carte mère : connexion
-- Carte graphique : affichage
-- Alimentation : énergie
-- Périphériques : clavier, souris, écran`
-},
-
-/* ===== HISTOIRE ===== */
-{
-keywords:["créateurs informatique","pionniers"],
-response:`Pionniers :
-- Charles Babbage (~1837)
-- Ada Lovelace (~1843)
-- Alan Turing (~1936)
-- John von Neumann (~1945)
-- Grace Hopper (~1959)`
-},
-{
-keywords:["générations ordinateur"],
-response:`Générations :
-1. 1940-1956 : tubes à vide
-2. 1956-1963 : transistors
-3. 1964-1971 : circuits intégrés
-4. 1971-1980 : microprocesseurs
-5. Aujourd’hui : intelligence artificielle`
+keywords:["créateurs informatique"],
+response:`Babbage (1837), Ada (1843), Turing (1936)`
 }
 
 ];
 
-
-// ================= LOGIQUE =================
-function respond(question) {
+// ===== LOGIQUE =====
+function respond(question){
     question = question.toLowerCase();
-    let answer = "Je ne suis pas sûr de comprendre. Pouvez-vous préciser votre question ?";
+    let answer = "Je ne comprends pas bien, peux-tu préciser ?";
     let creator = false;
 
     for(let item of knowledgeBase){
@@ -183,27 +120,22 @@ function respond(question) {
         }
     }
 
-    speakAnswer(answer, creator);
-}
+    addBotMessage(answer);
 
-
-// ================= VOIX + AFFICHAGE =================
-function speakAnswer(text, creator = false) {
-
-    if (creator) {
-        const bubble = document.createElement("div");
-        bubble.className = "creator-bubble";
-        bubble.innerHTML = `
-            <strong>Créateur :</strong> Béni Kikwika Kambwala<br>
-            <em>Développeur congolais, créateur de Technova Academy et Vortex Voice.</em>
-        `;
-        outputDiv.appendChild(bubble);
+    if(creator){
+        outputDiv.innerHTML += `
+        <div class="creator-bubble">
+        👤 Créateur : Béni Kikwika Kambwala
+        </div>`;
     }
 
-    outputDiv.textContent += `\n💡 Réponse: ${text}`;
+    speak(answer);
+}
 
+// ===== VOIX =====
+function speak(text){
     const synth = window.speechSynthesis;
     const utter = new SpeechSynthesisUtterance(text);
-    utter.lang = 'fr-FR';
+    utter.lang = "fr-FR";
     synth.speak(utter);
-}
+ }
